@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+import argparse
+
+class Legrand:
+	def __init__(self) -> None:
+        # input 'key': 'your value'
+		self.__encode_list = {
+            'a':'', 'b':'', 'c':'', 'd':'', 'e':'', 'f':'', 'g':'', 'h':'', 'i':'', 'j':'', 'k':'', 'l':'',\
+            'm':'', 'n':'', 'o':'', 'p':'', 'q':'', 'r':'', 's':'', 't':'', 'u':'', 'v':'', 'w':'', 'x':'',\
+            'y':'', 'z':'',
+
+            'A':'', 'B':'', 'C':'', 'D':'', 'E':'', 'F':'', 'G':'', 'H':'', 'I':'', 'J':'', 'K':'', 'L':'',\
+            'M':'', 'N':'', 'O':'', 'P':'', 'Q':'', 'R':'', 'S':'', 'T':'', 'U':'', 'V':'', 'W':'', 'X':'',\
+            'Y':'', 'Z':'',
+
+            '0':'', '1':'', '2':'', '3':'', '4':'', '5':'5', '6':'', '7':'', '8':'', '9':'',\
+
+            '`':'', '!':'', '@':'', '#':'', '$':'', '%':'', '^':'', '&':'', '*':'', '(':'', ')':'', '-':'',\
+            '_':'', '+':'', '=':'', '[':'', '{':'', ']':'', '}':'', '\\':'', '|':'', ';':'', ':':'', '\'':'',\
+            '"':'', ',':'', '<':'', '.':'', '>':'', '/':'', '?':'', ' ':'', '\n':''
+	} 
+
+		self.__decode_list = {}
+		for key, value in self.__encode_list.items():
+			self.__decode_list[value] = key
+
+	def encode(self, msg: str) -> str:
+		encode_text = ''
+		for char in msg:
+			if char in self.__encode_list:
+				encode_text += self.__encode_list[char]			
+
+		return  encode_text
+
+	def decode(self, msg: str) -> str:
+		index =0 
+		decode_text = ''
+		for char in msg:
+			if char in self.__decode_list:
+				decode_text += self.__decode_list[char]
+				
+		return  decode_text
+
+	def cipher(self, path, mode, opt):
+		if opt:
+			lines = None
+			extension '' # your want the extension
+			with open(path,'rt') as file:
+				lines = file.readlines()
+
+			legrand_index = path.rfind(extension)
+
+			if legrand_index > -1: # if create file is encoded file 
+				path = mode(path)[:legrand_index]
+			else: # or not encoded file
+				path = mode(path)+extension
+
+			with open(path,'wt') as file:
+				for line in lines:
+					file.write(mode(line))
+
+			return f"create the {path} file"
+
+		else:
+			return mode(path)
+		
+		
+if __name__ == '__main__': 
+	legrand = Legrand()
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-e", "--encode", help="-e, --encoding plain text to cipher text")
+	parser.add_argument("-d", "--decode", help="-d, --decoding  cipher text to plain text")
+	parser.add_argument("-f", "--file", action = "store_true", help="-f --file add option, -fe or -fd")
+	args = parser.parse_args()
+
+	if args.encode:
+		print(legrand.cipher(args.encode, legrand.encode, args.file))
+
+	elif args.decode:
+		print(legrand.cipher(args.decode, legrand.decode, args.file))
